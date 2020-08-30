@@ -9,7 +9,11 @@ pic_filename = uigetfile({'*.jpg;*.jpeg;*.png','Image Files (*.jpg,*.jpeg,*.png)
     '*.*','All Files (*.*)'},'Select a picture');
 
 pic = imread(pic_filename);
-px = double(imresize(pic, [128 128]));
+if ~isequal(size(pic,1),size(pic,2),128)
+    px = double(imresize(pic, [128 128]));
+else
+    px = double(pic);
+end
 px_color_id = uint8([]);
 
 for i=1:size(px,1)
@@ -20,7 +24,18 @@ for i=1:size(px,1)
     end
 end
 
+px_color_count = zeros(size(colors_name,1),1);
+for i=1:size(colors_name,1)
+    px_color_count(i) = sum(sum(px_color_id==i));
+    fprintf('%5d - %2d %s\n',px_color_count(i),i,string(colors_name(i)))
+end
+
+
 px = uint8(px);
+
+figure
+imagesc(px)
+axis image
 
 fig = figure;
 dcm = datacursormode(fig);
